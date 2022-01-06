@@ -3,6 +3,7 @@ import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
+import { bills } from '../fixtures/bills.js'
 
 const row = (bill) => {
   return (`
@@ -20,6 +21,9 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
+  // Ici pour filtrer le tableau
+
+  console.log(data)
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 

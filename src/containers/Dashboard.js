@@ -9,7 +9,6 @@ export const filteredBills = (data, status) => {
   return (data && data.length) ?
     data.filter(bill => {
       let selectCondition
-
       // in jest environment
       if (typeof jest !== 'undefined') {
         selectCondition = (bill.status === status)
@@ -66,6 +65,7 @@ export const getStatus = (index) => {
 }
 
 export default class {
+  // Ici pour dérouler liste tickets ? Jquery ??
   constructor({ document, onNavigate, store, bills, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
@@ -143,7 +143,8 @@ export default class {
         .html("")
       this.counter ++
     }
-
+    
+    console.log(bills)
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })

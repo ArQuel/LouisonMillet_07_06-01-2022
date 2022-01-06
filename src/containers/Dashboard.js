@@ -65,7 +65,6 @@ export const getStatus = (index) => {
 }
 
 export default class {
-  // Ici pour dérouler liste tickets ? Jquery ??
   constructor({ document, onNavigate, store, bills, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
@@ -144,7 +143,9 @@ export default class {
       this.counter ++
     }
     
+    // Ici pour dérouler liste tickets ? Jquery ??
     console.log(bills)
+    
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })

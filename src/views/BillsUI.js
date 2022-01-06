@@ -21,10 +21,12 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  // Ici pour filtrer le tableau
+  // Ici pour filtrer le tableau ?
+  const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
+  const datesSorted = [...data].sort(antiChrono)
 
   console.log(data)
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  return (datesSorted && datesSorted.length) ? datesSorted.map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {

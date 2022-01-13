@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import LoginUI from "../views/LoginUI";
 import Login from "../containers/Login.js";
 import { ROUTES } from "../constants/routes";
@@ -112,7 +116,6 @@ describe("Given that I am a user on login page", () => {
     });
   });
 });
-
 
 describe("Given that I am a user on login page", () => {
   describe("When I do not fill fields and I click on admin button Login In", () => {

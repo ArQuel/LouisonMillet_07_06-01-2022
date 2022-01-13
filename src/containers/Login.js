@@ -34,15 +34,11 @@ export default class Login {
         PREVIOUS_LOCATION = this.PREVIOUS_LOCATION
         this.document.body.style.backgroundColor="#fff"
       })
-    
-  }
 
+  }
 
   handleSubmitAdmin = e => {
     e.preventDefault()
-      // Changement ICI, pour connexion admin => Pas le bon champ sélectionné avec querySelector Bug : toutes les adresses sont créées même si je met nimporte quoi j'y ai accès ?
-    console.log(e.target.querySelector(`input[data-testid="admin-email-input"]`).value, e.target.querySelector(`input[data-testid="admin-password-input"]`).value,
-    )
     const user = {
       type: "Admin",
       email: e.target.querySelector(`input[data-testid="admin-email-input"]`).value,
@@ -96,4 +92,4 @@ export default class Login {
       return null
     }
   }
-} 
+}

@@ -1,9 +1,7 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
-
 import Actions from './Actions.js'
-import { bills } from '../fixtures/bills.js'
 
 const row = (bill) => {
   return (`
@@ -24,8 +22,6 @@ const rows = (data) => {
   // Ici pour filtrer le tableau ?
   const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
   const datesSorted = [...data].sort(antiChrono)
-
-  console.log(data)
   return (datesSorted && datesSorted.length) ? datesSorted.map(bill => row(bill)).join("") : ""
 }
 

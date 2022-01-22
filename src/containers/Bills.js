@@ -39,7 +39,7 @@ export default class {
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                formatedDate: formatDate(doc.date),
                 status: formatStatus(doc.status)
               }
             } catch(e) {
@@ -53,7 +53,8 @@ export default class {
               }
             }
           })
-          console.log('length', bills.length)
+            // const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
+            // const billsSorted = [...bills].sort(antiChrono)
         return bills
       })
     }

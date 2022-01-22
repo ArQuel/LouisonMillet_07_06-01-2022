@@ -15,6 +15,7 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
+  
   handleChangeFile = e => {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
@@ -24,8 +25,9 @@ export default class NewBill {
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
-
-    this.store
+    let extensionFile = fileName.split('.').pop()
+    if (extensionFile === 'jpg' || extensionFile === 'jpeg' || extensionFile === 'png') {
+      this.store
       .bills()
       .create({
         data: formData,
@@ -39,7 +41,15 @@ export default class NewBill {
         this.fileUrl = fileUrl
         this.fileName = fileName
       }).catch(error => console.error(error))
+    } else {
+      const inputFile = document.querySelector(`input[data-testid="file"]`)
+      inputFile.value = null
+      console.log("pas le bon format")
+      return
+    }
+    
   }
+
   handleSubmit = e => {
     e.preventDefault()
     const email = JSON.parse(localStorage.getItem("user")).email
@@ -57,13 +67,8 @@ export default class NewBill {
       status: 'pending'
     }
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value, "format :", this.fileUrl)
-    // if (bill.fileURL === jpg || bill.fileURL === jpeg || bill.fileURL === png){
       this.updateBill(bill)
       this.onNavigate(ROUTES_PATH['Bills'])
-    // } else {
-    //   console.log("pas bon format")
-    //   return
-    // }
   }
 
   // not need to cover this function by tests

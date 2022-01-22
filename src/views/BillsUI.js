@@ -8,7 +8,7 @@ const row = (bill) => {
     <tr>
       <td>${bill.type}</td>
       <td>${bill.name}</td>
-      <td>${bill.date}</td>
+      <td>${bill.formatedDate ?? bill.date}</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
@@ -18,10 +18,13 @@ const row = (bill) => {
     `)
   }
 
-const rows = (data) => {
-  // Ici pour filtrer le tableau ?
+const sortBills = (data) => {
   const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
-  const datesSorted = [...data].sort(antiChrono)
+  return data?.sort(antiChrono)
+}
+
+const rows = (data) => {
+  const datesSorted = sortBills(data)
   return (datesSorted && datesSorted.length) ? datesSorted.map(bill => row(bill)).join("") : ""
 }
 

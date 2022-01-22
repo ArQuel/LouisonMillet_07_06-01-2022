@@ -146,7 +146,6 @@ export default class {
       this.counter ++
     }
     
-    // Ici pour dérouler liste tickets ? Jquery ??
     console.log(bills)
     
     bills.forEach(bill => {

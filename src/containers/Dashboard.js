@@ -145,8 +145,6 @@ export default class {
       this.counter ++
     }
     
-    console.log(bills)
-    // bills peut être pas le bon truc sur lequel forEach car ça met des events plusieurs fois,  peut être cibler la card ?
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).off()
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))

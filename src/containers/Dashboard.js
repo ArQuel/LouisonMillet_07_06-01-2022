@@ -138,7 +138,6 @@ export default class {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
       $(`#status-bills-container${this.index}`)
@@ -147,8 +146,9 @@ export default class {
     }
     
     console.log(bills)
-    
+    // bills peut être pas le bon truc sur lequel forEach car ça met des events plusieurs fois,  peut être cibler la card ?
     bills.forEach(bill => {
+      $(`#open-bill${bill.id}`).off()
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
 

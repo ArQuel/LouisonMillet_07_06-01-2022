@@ -11,6 +11,7 @@ export default class {
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
+      // Tester userevent a bien cliqué
       icon.addEventListener('click', (e) => this.handleClickIconEye(icon))
     })
     new Logout({ document, localStorage, onNavigate })
@@ -19,7 +20,7 @@ export default class {
   handleClickNewBill = e => {
     this.onNavigate(ROUTES_PATH['NewBill'])
   }
-
+  // tester si la modale se lance bien (vérifier data test id 'show')
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
@@ -53,8 +54,6 @@ export default class {
               }
             }
           })
-            // const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
-            // const billsSorted = [...bills].sort(antiChrono)
         return bills
       })
     }

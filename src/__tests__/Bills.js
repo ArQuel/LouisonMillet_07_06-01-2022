@@ -1,17 +1,40 @@
 /**
  * @jest-environment jsdom
  */
-
 import { screen } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
+import { ROUTES, ROUTES_PATH } from "../constants/routes"
+import Bills from "../containers/Bills.js"
+import userEvent from "@testing-library/user-event"
+import store from "../__mocks__/store"
+import { fireEvent } from "@testing-library/dom";
+import router from '../app/Router.js'
+import { localStorageMock } from "../__mocks__/localStorage.js"
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
-      const html = BillsUI({ data: []})
-      document.body.innerHTML = html
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+
+      const root = document.createElement('div')
+      root.setAttribute('id', 'root')
+      document.body.append(root)
+      router()
+
+      window.onNavigate(ROUTES_PATH.Bills)
+      // const bills = new Bills({document, onNavigate, store: null, localStorage})
+
+      // const html = BillsUI({ data: []})
+      // document.body.innerHTML = html
       //to-do write expect expression
+      
+      const icone = screen.getByTestId('icon-window')
+      expect(icone.classList.contains('active-icon')).toBe(true)
     })
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
@@ -20,6 +43,62 @@ describe("Given I am connected as an employee", () => {
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
+    })
+
+    // Test nouvelle bill page
+    describe("When I click on the new bill's button", () => {
+      it("should renders new bill page", () => {
+         // Pourquoi ?
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        }
+
+        const bills = new Bills({ document, onNavigate, store, localStorage })
+        
+        const handleClickNewBill = jest.fn((e) => bills.handleClickNewBill(e))
+        const addnewBill = screen.getByTestId('btn-new-bill')
+  
+        addnewBill.addEventListener("click", handleClickNewBill)
+  
+        userEvent.click(addnewBill);
+  
+        expect(handleClickNewBill).toHaveBeenCalled()
+        expect(screen.queryByText('Envoyer une note de frais')).toBeTruthy()
+      });
+    })
+
+    // Test de la modale
+    describe("When I click on icon eye", () => {
+      test("modal open correctly", () => {
+        // const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
+        // iconEye.forEach(icon => {
+        //   fireEvent.click(icon)
+        //   expect(handleClickIconEye).toHaveBeenCalled()
+        // })  
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      // Pourquoi ?
+      document.body.innerHTML = BillsUI({ data: bills })
+      const bills2 = new Bills({ document, onNavigate, localStorage: window.localStorage })
+
+      const handleClickIconEye = jest.fn(bills2.handleClickIconEye)
+
+      const modale = document.getElementById("modaleFile")
+
+      // Remplacer $.fn ?
+      $.fn.modal = jest.fn(() => modale.classList.add('show'))
+
+      const iconEyes = screen.getAllByTestId('icon-eye')
+      const iconEye = iconEyes[1]
+
+      iconEye.addEventListener('click', handleClickIconEye(iconEye))
+
+      userEvent.click(iconEye);
+
+      expect(handleClickIconEye).toHaveBeenCalled()
+      expect(modale.classList).toContain('show')
+      })
     })
   })
 })

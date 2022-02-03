@@ -8,7 +8,6 @@ import { ROUTES, ROUTES_PATH } from "../constants/routes"
 import Bills from "../containers/Bills.js"
 import userEvent from "@testing-library/user-event"
 import store from "../__mocks__/store"
-import { fireEvent } from "@testing-library/dom";
 import router from '../app/Router.js'
 import { localStorageMock } from "../__mocks__/localStorage.js"
 
@@ -27,11 +26,6 @@ describe("Given I am connected as an employee", () => {
       router()
 
       window.onNavigate(ROUTES_PATH.Bills)
-      // const bills = new Bills({document, onNavigate, store: null, localStorage})
-
-      // const html = BillsUI({ data: []})
-      // document.body.innerHTML = html
-      //to-do write expect expression
       
       const icone = screen.getByTestId('icon-window')
       expect(icone.classList.contains('active-icon')).toBe(true)
@@ -47,8 +41,9 @@ describe("Given I am connected as an employee", () => {
 
     // Test nouvelle bill page
     describe("When I click on the new bill's button", () => {
-      it("should renders new bill page", () => {
+      test("should renders new bill page", () => {
          // Pourquoi ?
+        screen.debug()
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         }
@@ -57,7 +52,7 @@ describe("Given I am connected as an employee", () => {
         
         const handleClickNewBill = jest.fn((e) => bills.handleClickNewBill(e))
         const addnewBill = screen.getByTestId('btn-new-bill')
-  
+        
         addnewBill.addEventListener("click", handleClickNewBill)
   
         userEvent.click(addnewBill);
@@ -70,17 +65,12 @@ describe("Given I am connected as an employee", () => {
     // Test de la modale
     describe("When I click on icon eye", () => {
       test("modal open correctly", () => {
-        // const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
-        // iconEye.forEach(icon => {
-        //   fireEvent.click(icon)
-        //   expect(handleClickIconEye).toHaveBeenCalled()
-        // })  
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
+      // const onNavigate = (pathname) => {
+      //   document.body.innerHTML = ROUTES({ pathname })
+      // }
       // Pourquoi ?
       document.body.innerHTML = BillsUI({ data: bills })
-      const bills2 = new Bills({ document, onNavigate, localStorage: window.localStorage })
+      const bills2 = new Bills({ document, onNavigate: null, localStorage: window.localStorage })
 
       const handleClickIconEye = jest.fn(bills2.handleClickIconEye)
 

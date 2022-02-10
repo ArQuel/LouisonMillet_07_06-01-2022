@@ -1,10 +1,13 @@
+import mockStore from "../__mocks__/store"
 import {fireEvent, screen} from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
-import store from "../__mocks__/store";
-import BillsUI from "../views/BillsUI.js";
 import {ROUTES, ROUTES_PATH} from "../constants/routes";
 import Store from "../app/Store";
+
+jest.mock("../app/store", () => mockStore)
+
 
 const onNavigate = (pathname) => {
     document.body.innerHTML = ROUTES({pathname});
@@ -32,7 +35,7 @@ describe("Given I am connected as an employee", () => {
         test("Then function handleChangeFile should be called", () => {
             const html = NewBillUI()
             document.body.innerHTML = html
-            jest.spyOn(Store.api, 'post').mockImplementation(store.post)
+            jest.spyOn(Store.api, 'post').mockImplementation(mockStore.post)
 
             const newBill = new NewBill({
                 document,
@@ -45,12 +48,9 @@ describe("Given I am connected as an employee", () => {
             const file = screen.getByTestId("file");
 
             file.addEventListener("change", handleChangeFile)
-            fireEvent.change(file, {
-                target: {
-                    files: [new File(["image"], "test.png", {type: "image/png"})]
-                }
-            });
+            userEvent.upload(file, new File(["test"], "test.png", {type: "image/png"}));
             expect(handleChangeFile).toHaveBeenCalled()
+            expect(screen.getByTestId("file").value).not.toBe("")
         });
     })
 
@@ -58,7 +58,7 @@ describe("Given I am connected as an employee", () => {
         test("Then function handleChangeFile should be called", () => {
             const html = NewBillUI()
             document.body.innerHTML = html
-            jest.spyOn(Store.api, 'post').mockImplementation(store.post)
+            jest.spyOn(Store.api, 'post').mockImplementation(mockStore.post)
 
             const newBill = new NewBill({
                 document,
@@ -80,7 +80,7 @@ describe("Given I am connected as an employee", () => {
                 }
             });
             expect(handleChangeFile).toHaveBeenCalled()
-            expect(file.value).toBe('')
+            expect(file.value).toBe("")
         });
     })
     describe("When I navigate to the newbill page, and I fill the form", () => {
@@ -145,3 +145,31 @@ describe("Given I am connected as an employee", () => {
 
     })
 })
+
+describe("Given I am a user connected as Employee", () => {
+    describe("When I navigate to Bills", () => {
+      test("fetches bills from mock API POST", async () => {
+        const spy = jest.spyOn(mockStore.bills(), 'update')
+        localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+        const html = NewBillUI()
+        document.body.innerHTML = html
+        const onNavigate = (pathname) => {
+            document.body.innerHTML = ROUTES({ pathname })
+        };
+        const newBill = new NewBill({
+            document,
+            onNavigate,
+            mockStore,
+            localStorage: window.localStorage,
+        });
+        const formNewBill = screen.getByTestId('form-new-bill')
+        const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
+        formNewBill.addEventListener('submit', handleSubmit)
+        fireEvent.submit(formNewBill)
+        expect(spy).toHaveBeenCalled()
+        const billsContent = screen.getByTestId('tbody') 
+        expect(billsContent).toBeTruthy()
+      })  
+    })
+  })
+  

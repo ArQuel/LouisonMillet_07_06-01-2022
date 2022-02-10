@@ -9,10 +9,13 @@ export const filteredBills = (data, status) => {
   return (data && data.length) ?
     data.filter(bill => {
       let selectCondition
+
       // in jest environment
       if (typeof jest !== 'undefined') {
         selectCondition = (bill.status === status)
-      } else {
+      }
+      /* istanbul ignore next */
+      else {
         // in prod environment
         const userEmail = JSON.parse(localStorage.getItem("user")).email
         selectCondition =
@@ -72,14 +75,13 @@ export default class {
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
-    this.getBillsAllUsers()
     new Logout({ localStorage, onNavigate })
   }
 
   handleClickIconEye = () => {
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
     const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
-    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
+    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`)
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
   }
 
@@ -89,21 +91,18 @@ export default class {
     if (this.counter % 2 === 0) {
       bills.forEach(b => {
         $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
-        this.counter ++
       })
       $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
-      console.log(this.counter + " test 1")
       this.counter ++
     } else {
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
-        <div id="big-billed-icon"> ${BigBilledIcon} </div>
+        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
       `)
       $('.vertical-navbar').css({ height: '120vh' })
-      console.log(this.counter + " test 2")
       this.counter ++
     }
     $('#icon-eye-d').click(this.handleClickIconEye)
@@ -138,15 +137,15 @@ export default class {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
+      this.counter ++
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
       $(`#status-bills-container${this.index}`)
         .html("")
       this.counter ++
     }
-    
+
     filteredBills(bills, getStatus(this.index)).forEach(bill => {
-      // $(`#open-bill${bill.id}`).off()
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
 
@@ -154,7 +153,6 @@ export default class {
 
   }
 
-  // not need to cover this function by tests
   getBillsAllUsers = () => {
     if (this.store) {
       return this.store
@@ -170,11 +168,14 @@ export default class {
         }))
         return bills
       })
-      .catch(console.log)
+      .catch(error => {
+        throw error;
+      })
     }
   }
-    
+
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
     return this.store

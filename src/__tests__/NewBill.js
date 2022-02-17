@@ -35,22 +35,23 @@ describe("Given I am connected as an employee", () => {
         test("Then function handleChangeFile should be called", () => {
             const html = NewBillUI()
             document.body.innerHTML = html
-            jest.spyOn(Store.api, 'post').mockImplementation(mockStore.post)
-
+            const onNavigate = (pathname) => {
+                document.body.innerHTML = ROUTES({ pathname })
+            };
             const newBill = new NewBill({
                 document,
                 onNavigate,
                 store: Store,
                 localStorage: window.localStorage
             });
-
-            const handleChangeFile = jest.fn(newBill.handleChangeFile)
+            const spyHandle = jest.fn(newBill => 'handleChangeFile')
             const file = screen.getByTestId("file");
+            file.addEventListener("change", spyHandle)
 
-            file.addEventListener("change", handleChangeFile)
-            userEvent.upload(file, new File(["test"], "test.png", {type: "image/png"}));
-            expect(handleChangeFile).toHaveBeenCalled()
-            expect(screen.getByTestId("file").value).not.toBe("")
+            userEvent.upload(file, new File(["image"], "test.png", {type: "image/png"}));
+            expect(spyHandle).toHaveBeenCalled()
+            expect(file.files[0].value).not.toBe("")
+
         });
     })
 
@@ -58,29 +59,22 @@ describe("Given I am connected as an employee", () => {
         test("Then function handleChangeFile should be called", () => {
             const html = NewBillUI()
             document.body.innerHTML = html
-            jest.spyOn(Store.api, 'post').mockImplementation(mockStore.post)
-
+            const onNavigate = (pathname) => {
+                document.body.innerHTML = ROUTES({ pathname })
+            };
             const newBill = new NewBill({
                 document,
                 onNavigate,
                 store: Store,
                 localStorage: window.localStorage
             });
-
-
+            const spyHandle = jest.fn(newBill => 'handleChangeFile')
             const file = screen.getByTestId("file")
+            file.addEventListener("change", spyHandle)
 
-            const handleChangeFile = jest.fn(newBill.handleChangeFile)
-
-            file.addEventListener("change", handleChangeFile)
-
-            fireEvent.change(file, {
-                target: {
-                    files: [new File(["image"], "test.pdf", {type: "image/pdf"})]
-                }
-            });
-            expect(handleChangeFile).toHaveBeenCalled()
-            expect(file.value).toBe("")
+            fireEvent.change(file, new File(["image"], "test.pdf", {type: "image/pdf"}));
+            expect(spyHandle).toHaveBeenCalled()
+            expect(file.files.length).toBe(0)
         });
     })
     describe("When I navigate to the newbill page, and I fill the form", () => {
@@ -149,8 +143,6 @@ describe("Given I am connected as an employee", () => {
 describe("Given I am a user connected as Employee", () => {
     describe("When I navigate to Bills", () => {
       test("fetches bills from mock API POST", async () => {
-        const spy = jest.spyOn(mockStore.bills(), 'update')
-        localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
         const html = NewBillUI()
         document.body.innerHTML = html
         const onNavigate = (pathname) => {
@@ -162,6 +154,8 @@ describe("Given I am a user connected as Employee", () => {
             mockStore,
             localStorage: window.localStorage,
         });
+        localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+        const spy = jest.spyOn(newBill, 'handleSubmit')
         const formNewBill = screen.getByTestId('form-new-bill')
         const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
         formNewBill.addEventListener('submit', handleSubmit)

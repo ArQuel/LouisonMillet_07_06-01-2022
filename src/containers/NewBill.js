@@ -25,7 +25,7 @@ export default class NewBill {
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
-    let extensionFile = fileName.split('.').pop()
+    let extensionFile = fileName.split('.').pop().toLowerCase()
     if (extensionFile === 'jpg' || extensionFile === 'jpeg' || extensionFile === 'png') {
       this.store
       .bills()

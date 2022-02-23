@@ -36,6 +36,7 @@ export default class {
         const bills = snapshot
           .map(doc => {
             try {
+              // Formated date
               return {
                 ...doc,
                 formatedDate: formatDate(doc.date),

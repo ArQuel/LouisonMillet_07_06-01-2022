@@ -6,6 +6,7 @@ import NewBill from "../containers/NewBill.js"
 import {ROUTES, ROUTES_PATH} from "../constants/routes";
 import Store from "../app/Store";
 
+
 jest.mock("../app/store", () => mockStore)
 
 
@@ -164,6 +165,25 @@ describe("Given I am a user connected as Employee", () => {
         const billsContent = screen.getByTestId('tbody') 
         expect(billsContent).toBeTruthy()
       })  
+      test("post bills  via an API and fails with 404 message error", async () => {
+        mockStore.bills.mockImplementationOnce(() => {
+            return {
+                post: (data) => {
+                    Promise.resolve({
+                      data: [data]
+                    })
+                }
+          }
+        })
+        mockStore.post.mockImplementationOnce(() =>
+          Promise.reject(new Error("Erreur 404"))
+        )
+        const html = BillsUI({ error: "Erreur 404" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 404/)
+        expect(message).toBeTruthy()
+      })
     })
+    
   })
   
